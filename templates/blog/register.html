@@ -1,7 +1,14 @@
 {% extends "blog/layout.html" %}
 
+{% load static %}
+
 {% block title %}
     Register
+{% endblock %}
+
+{% block head %}
+    <script src="{% static 'jquery/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'js/register.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -24,7 +31,7 @@
                 <label class="form-label" for="verification">Verification Code</label>
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Verification Code" id="verification">
-                    <button class="btn btn-outline-secondary" type="button">Get Code</button>
+                    <button class="btn btn-outline-secondary" type="button" id="captcha-btn">Get Code</button>
                 </div>
             </div>
 

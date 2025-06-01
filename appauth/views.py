@@ -3,6 +3,7 @@ from django.shortcuts import render
 import string
 import random
 from django.core.mail import send_mail
+from .models import CaptchaModel
 
 
 # Create your views here.
@@ -22,11 +23,13 @@ def send_email_captcha(request):
         }, status=400)
 
     # Generate random number as verification code
-    code = "".join(random.sample(string.digits, 4))
+    captcha = "".join(random.sample(string.digits, 4))
+
+    CaptchaModel.objects.update_or_create(email=email, defaults={"captcha": captcha})
 
     send_mail(
         subject = "Verification Code for Webpage",
-        message = f"Your verification code is {code}",
+        message = f"Your verification code is {captcha}",
         recipient_list=[email],
         from_email = None
     )
