@@ -16,6 +16,8 @@
         <h1>Register</h1>
         <form action="" method="POST">
 
+            {% csrf_token %}
+
             <div class="mb-3">
                 <label class="form-label" for="username">Username</label>
                 <input type="text" class="form-control" name="username" placeholder="Username" id="username">
@@ -30,7 +32,7 @@
             <div class="mb-3">
                 <label class="form-label" for="verification">Verification Code</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Verification Code" id="verification">
+                    <input type="text" class="form-control" placeholder="Verification Code" id="verification" name="captcha">
                     <button class="btn btn-outline-secondary" type="button" id="captcha-btn">Get Code</button>
                 </div>
             </div>
