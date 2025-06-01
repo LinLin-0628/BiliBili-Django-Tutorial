@@ -5,14 +5,46 @@ import random
 from django.core.mail import send_mail
 from .models import CaptchaModel
 from django.views.decorators.http import require_http_methods
-from .forms import RegisterForm
-from django.contrib.auth import get_user_model
+from .forms import RegisterForm, LoginForm
+from django.contrib.auth import get_user_model, login
 
 User = get_user_model()
 
 # Create your views here.
-def login(request):
-    return render(request, "blog/login.html")
+
+@require_http_methods(["GET", "POST"])
+def applogin(request):
+
+    if request.method == "GET":
+        return render(request, "blog/login.html")
+
+    else:
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
+            remember: int = form.cleaned_data.get("remember")
+
+            user = User.objects.filter(email=email).first()
+
+            if user and user.check_password(password):
+                # Login
+                login(request, user)
+
+                # If user choose do not remember me
+                if not remember:
+                    request.session.set_expiry(0)
+
+                return redirect("blog:index")
+            else:
+                print("Invalid email or password")
+                # form.add_error("email", "Invalid email or password")
+                # return render(request, "blog/login.html", {"form": form})
+
+                return redirect(reverse("appauth:login"))
+        else:
+            return redirect(reverse("appauth:login"))
+
 
 @require_http_methods(["GET", "POST"])
 def register(request):

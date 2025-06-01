@@ -52,3 +52,18 @@ class RegisterForm(forms.Form):
         captcha_model.delete()
 
         return captcha
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        error_messages={
+            "required": 'Please enter an email address.',
+            "invalid": 'Please enter a valid email address.',
+        }
+    )
+
+    password = forms.CharField(max_length=64, min_length=4)
+
+    renderer = forms.IntegerField(required=False)
+
+
