@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from .models import CaptchaModel
 from django.views.decorators.http import require_http_methods
 from .forms import RegisterForm, LoginForm
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, logout
 
 User = get_user_model()
 
@@ -97,3 +97,9 @@ def send_email_captcha(request):
         "code": 200,
         "message": "Email sent"
     }, status=200)
+
+
+def applogout(request):
+
+    logout(request)
+    return redirect(reverse("blog:index"))
