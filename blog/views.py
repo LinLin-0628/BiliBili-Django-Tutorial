@@ -16,7 +16,15 @@ def index(request):
 
 
 def blog_detail(request, blog_id):
-    return render(request, "blog/blog_detail.html")
+
+    try:
+        blog = Blog.objects.get(pk=blog_id)
+    except Exception as e:
+        blog = None
+
+    return render(request, "blog/blog_detail.html", {
+        "blog": blog
+    })
 
 @login_required(login_url=reverse_lazy("appauth:login"))
 @require_http_methods(["GET", "POST"])
