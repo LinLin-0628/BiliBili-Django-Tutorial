@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, redirect
 from django.urls.base import reverse_lazy
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.http.response import JsonResponse
+from django.db.models import Q
 
 from .models import *
 from .forms import *
@@ -12,7 +13,11 @@ from .forms import *
 
 def index(request):
 
-    return render(request, "blog/index.html")
+    blogs = Blog.objects.all().order_by("-created_time")
+
+    return render(request, "blog/index.html", {
+        "blogs":blogs
+    })
 
 
 def blog_detail(request, blog_id):
@@ -71,5 +76,28 @@ def create_blog(request):
 
 
 
+@login_required()
+@require_POST
+def comment(request):
+
+    blog_id = request.POST.get("blog_id")
+    comment_content = request.POST.get("content")
+
+    BlogComment.objects.create(
+        content=comment_content,
+        blog_id=blog_id,
+        author=request.user
+    )
+
+    return redirect(reverse("blog:blog_detail", kwargs={"blog_id":blog_id}))
 
 
+@require_GET
+def search(request):
+    q = request.GET.get("q")
+
+    blogs = Blog.objects.filter(Q(title__icontains=q) | Q(content__icontains=q))
+
+    return render(request, "blog/index.html", {
+        "blogs": blogs
+    })
